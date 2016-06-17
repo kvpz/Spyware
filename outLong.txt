@@ -1,0 +1,12 @@
+ 
+-testLong.txt----------------------------------------------
+
+ Input file name: testLong.txt
+            size: 1000
+
+           algorithm     comp_count
+           ---------     ----------
+    g_selection_sort         500500
+    g_insertion_sort         250848
+         g_heap_sort          17263
+          List::Sort           8736

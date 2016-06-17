@@ -1,0 +1,11 @@
+Project 3 - Spyware README file
+
+notes for future improvements:
+clang++ -std=c++11 -Wall -Wextra -o./hsort.x
+-I. -I/home/courses/cop4530p/LIB/cpp -I/home/courses/cop4530p/LIB/tcpp hsort.cpp
+The above is the compile command I used to make hsort.cpp. This is also the same
+line that I can use to compile sort_spy.cpp with the appropriate changes. How
+can I automate this between files? Maybe make a variable that would replace in
+this instant hsort.cpp and produce the appropriate executable or simple a
+makefile with different section?
+

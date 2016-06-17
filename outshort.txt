@@ -1,0 +1,12 @@
+ 
+-testshort.txt----------------------------------------------
+
+ Input file name: testshort.txt
+            size: 10
+
+           algorithm     comp_count
+           ---------     ----------
+    g_selection_sort             55
+    g_insertion_sort             41
+         g_heap_sort             38
+          List::Sort             19

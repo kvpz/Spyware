@@ -1,0 +1,159 @@
+REPORT:
+COP 4530 Project 3
+Using a Trojan Horse Comparison Operator to Analyze Algorithm Runtimes
+Kevin Perez
+kperez
+kp12g
+
+Note: gauge functions 
+1. Let f(n) = n(n+1)/2. Of the following possibilities, state which are true
+about f and of those, which one best describes the asymptotic class of f?
+
+(gauge function : n^2)
+a. false. The constant on the left must become much smaller than 1 for large n
+   while the right never has to be larger than 1 for n > 3.   
+b. true. The best because we can ignore the constant for large n. The constant
+   must be greater than 1 if n <= 2.
+c. false. Constant must be very small for larger inputs of n. When constant
+   equals 1, f(n) will always be smaller for large n.
+
+(gauge function: (n(n+1)/2))
+d. true. True when the constant on the left is less than or equal to 1, and the
+   constant on the right >= 1. 
+e. true. Always true for any n.
+f. true. Always true if the constant is less than or equal to 1 for all n.
+
+(gauge function: n^3)
+g. false. True only when the left constant is very small for larger n but not as
+   n approaches infinity. The constant on the right does not have to be larger than 1 for most n.
+h. true
+i. false. The left side approaches infinity faster than f(n).
+
+(gauge function: nlog)
+j. false. The right side inequality grows much quicker than the left. 
+k. false. f(n) grows much faster.
+l. true. f(n) is bounded below as n approaches infinity.
+
+(gauge function: n)
+m. false. The right side inequality would require a very large constant as n
+   approaches infinity. 
+n. false. f(n) grows much faster. The constants of the gauge function would have	
+   to be very large as n approaches infinity.
+o. true. f(n) is always larger than gauge as n approaches infinity.
+
+The best asymptotic class to describe f would be O(n^2) because it is true
+for all input size n, and n^2 is a simple quadratic to visualize. The bound between f(n) and
+n^2 becomes larger as n approaches infinity therefore f(n) is guaranteed to be bounded
+above by n^2, i.e. n^2 is the upper bound on the complexity of the
+problem. Generally, big-O notation is independent of the input and
+implementation details. 
+
+
+2. Which of these statements are best supported by data obtained using
+search_spy:
+a. fsu::g_lower_bound has asymptotic runtime Theta(log n).
+b. fsu::g_lower_bound has asymptotic runtime O(log n) but not Omega(log n).
+c. seq::g_lower_bound has asymptotic runtime Theta(n).
+d. seq::g_lower_bound has asymptotic runtime O(n) but not Omega(n).
+
+d, seq::g_lower_bound has an asymptotic runtime O(n) because the worst case
+scenario when searching for the first occurence of the value being searched
+would be the total amount objects of that value type, in which case it is never
+found and the whole sequence has been iterated. It cannot be Omega(n) because
+the value can be found in less than the total amount, n, of the objects with one
+iteration through the sequence (only one iteration is ever performed).
+ Example result from spy_search:
+  algorithm   min comps   avg comps   max comps  size  ceiling	trials
+    ---------   ---------   ---------   ---------   ----  --------     ----
+  fsu::g_lower_bound   6        6.60           7     90         7     183
+  fsu::g_upper_bound   6        6.68           7     90         7     183
+  alt::g_lower_bound   6        6.60           7     90         7     183
+  alt::g_upper_bound   6        6.68           7     90         7     183
+  seq::g_lower_bound   1       40.37          90     90         7     183
+  seq::g_upper_bound   1       42.22          90     90         7     183
+
+f(n)=42.22 <= O(90)
+
+Also, a. fsu::g_lower_bound has an asymptotic runtime of theta(log n) as can be
+analyzed in the results above. Example, c1*log(90) <= 6.60 <= c2*log(90). Binary
+search halves the sequence per iteration that the value is not found. Thus the
+worst case scenario for an input of 90 items would be c*(90)=c*2^k, constant
+c. In the above example, the worst case is k=6.68; 2^(6.68) ~ 90.
+
+
+3. State an asymptotic runtime for each sort algorithm that is best supported
+by data gathered with sort_spy. Argue your answer using collected data, and also
+discuss characteristics of the algorithm body that support your answer.
+		
+Example output:
+            size: 10000
+
+algorithm         comp_count    n    n log n    n(n+1)/2
+---------         ----------   ---   -------    --------
+g_selection_sort  50005000    10000   132877    50005000
+g_insertion_sort  25159438    10000   132877    50005000
+g_heap_sort         239531    10000   132877    50005000
+List::Sort          123588    10000   132877    50005000
+						 
+Looking at the data I gathered for an unordered sequence of 10000 integers,
+g_selection_sort had the longest run time and List's sort the
+shortest. Assigning appropriate asymptotic runtimes for each
+ - g_selection_sort: O(n^2) because observing the data, n(n+1)/2 = O(n^2) and
+ n(n+1)/2 is exactly how many comparisons(made with the predicate class) it made.
+ - g_insertion_sort: O(n^2) because of the former reason as g_selection_sort but
+ much closer (it is the upper bound) to n(n+1)/4.
+ - g_heap_sort: O(nlogn) because the comparison count is ~2*nlogn. The majority
+ of the time heapsort is making many comparisons. The logn rises from the
+ initialization of the parent node when pushing onto the heap.
+ - List::sort: O(nlogn), although the Lacher's code says theta(n^2). I think it
+ is the former because the amortized time is less than nlogn for any input n
+ that I observed where n=10 through n=100,000. I disagree it is theta(n^2)
+ because the inner for loop does not always run n times. The inner loop varies
+ based on the condition of t < k, where t is initially at the beginning of the
+ sequence and so is k. By my observation, if the conditions of the inner for
+ loop are satisfied, the inner loop iterates more per outer loop iteration.
+
+4. Describe two scenarios, one under which the namespace fsu search algorithms
+are appropriate and one under which the namespace seq versions are appropriate.
+
+  Because the fsu algorithm, which uses binary search, runs on random access
+  memory, there may be a limit to the size of the input in which case external
+  sorting would be the solution. Although sequential search will be dealing with
+  chunks of memory instead of data.
+-Scenario 1, Sequential search would be better than binary search if the value
+  being search for is at the beginning of the sequence, ordered or unordered.
+  Keep in mind that with randomly ordered data the probability of having a
+  successful search would be unlikely with any sort. I'll just consider this as
+  the lucky event. So for a common occuring scenario, a postulated sequence of
+  events, sequential search would be appropriate for an unordered set of objects.
+-Scenario 2: If a list contains a large and ORDERED set of objects, binary
+  search would be most appropriate. 
+
+Work Log:
+6/5/15
+-Created compare_spy.h. Created a test file using ranuint containing 20 items and
+with an upperbound of 20. Ran and compared sort_spy executable and received the
+same results as the teacher's.
+-Also works for a test file with 1000 items and upperbounds of 1100 and 900.
+6/8/15
+-Received an illegal instruction error. Problem: Dereferenced incorrectly.
+-Not sure if I understand what is meant by sequential. I completed
+g_lower_bound() with 6 lines of code and no use of the iterator end pointer nor
+the predicate object.
+
+6/9/15
+- Rewriting upper and lower bound algorithms using predicate.
+-       if(!cmp(*beg, t+1))
+          return beg;
+    This works in g_upper_bound(). Question now is if it would work for
+    characters? It should, specifically t+1, because that would be an increment
+    in the ascii code(towards next character). It works.
+
+6/10/15
+- Comparing my program search_spy.x with the teacher's search_spy_char_i.x and
+search_spy_uint32_i.x the 6 sample batch files in the directory. Results match.
+
+
+
+
+

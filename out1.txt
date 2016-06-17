@@ -1,0 +1,12 @@
+ 
+-test1.txt----------------------------------------------
+
+ Input file name: test1.txt
+            size: 20
+
+           algorithm     comp_count
+           ---------     ----------
+    g_selection_sort            210
+    g_insertion_sort            107
+         g_heap_sort            115
+          List::Sort             71
